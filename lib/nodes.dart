@@ -2,14 +2,17 @@
  * @Date: 2021.04.29 11:04
  * @Description: Omit
  * @LastEditors: Rustle Karl
- * @LastEditTime: 2021.04.29 11:04
+ * @LastEditTime: 2021.05.25 16:07:40
  */
+import 'dart:io';
+
 import 'package:path/path.dart' as path;
 import 'package:ffmpeg_generator_dart/_dag.dart';
 import 'package:ffmpeg_generator_dart/_node.dart';
 import 'package:ffmpeg_generator_dart/_utils.dart';
 import 'package:tuple/tuple.dart';
-import 'color.dart' as color;
+
+import 'pkgs/color.dart' as color;
 import 'constants.dart';
 import 'settings.dart';
 
@@ -80,7 +83,6 @@ class OutputStream extends Stream {
   List<String> compile({
     String executable = 'ffmpeg',
     bool direct_print = true,
-    bool join_args = false,
     bool overwrite = true,
   }) {
     var cmd_args_seq = [executable] + get_output_args(overwrite: overwrite);
@@ -91,6 +93,24 @@ class OutputStream extends Stream {
     }
 
     return cmd_args_seq;
+  }
+
+  Future<void> run({
+    String executable = 'ffmpeg',
+    bool direct_print = true,
+    bool overwrite = true,
+  }) async {
+    final stopwatch = Stopwatch()..start();
+
+    var cmd_args_seq = compile(
+      executable: executable,
+      direct_print: direct_print,
+      overwrite: overwrite,
+    );
+
+    await Process.run(cmd_args_seq[0], cmd_args_seq.sublist(1));
+
+    color.redln('[${(stopwatch.elapsed.inMilliseconds / 1000).toStringAsFixed(2)}s]');
   }
 }
 

@@ -1,7 +1,7 @@
 <!--
  * @Date: 2021.04.27 17:32:32
  * @LastEditors: Rustle Karl
- * @LastEditTime: 2021.05.04 13:33:50
+ * @LastEditTime: 2021.05.25 16:21:07
 -->
 
 # FFmepg Generator Dart
@@ -11,25 +11,24 @@
 ```dart
 import 'package:ffmpeg_generator_dart/_ffmpeg.dart';
 
-const input_file = '/path/to/input_file';
+const input_file = 'C:/Users/Admin/Videos/FFmpeg/InputsData/v1.mp4';
+const output_file = 'C:/Users/Admin/Videos/FFmpeg/OutputsData/v1_output.mp4';
 
-void main() {
-  input(input_file, kwargs: {})
-      .filter('flip', [], {})
+Future<void> main() async {
+  await input(input_file, kwargs: {})
+      .filter('vflip', [], {})
       .output(
-    ['output_file'],
-    vn: true,
-    start_position: 0,
-    duration: 20,
-    args: [],
-    kwargs: {
-      'stream_loop': 2,
-    },
-  )
-      .compile();
+        [output_file],
+        start_position: 0,
+        duration: 20,
+        args: [],
+        kwargs: {},
+      )
+      .run();
 }
 ```
 
 ```
-ffmpeg -hwaccel cuda -vcodec h264_cuvid -i /path/to/input_file -filter_complex "[0]flip[tag0]" -stream_loop 2 -t 20.0 -vn -map [tag0] output_file -y -hide_banner
+ffmpeg -hwaccel cuda -vcodec h264_cuvid -i C:/Users/Admin/Videos/FFmpeg/InputsData/v1.mp4 -filter_complex "[0]vflip[tag0]" -t 20.0 -map [tag0] C:/Users/Admin/Videos/FFmpeg/OutputsData/v1_output.mp4 -y -hide_banner
+[10.79s]
 ```
